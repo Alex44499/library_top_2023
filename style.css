@@ -23,7 +23,7 @@ body {
 }
 
 /* Header text styling */
-.main-text > h1 {
+.main-text>h1 {
     font-size: 60px;
     font-weight: 800;
 }
@@ -34,31 +34,101 @@ body {
 }
 
 /* Bold font for intro text and button */
-.main-text-intro, 
-.add-new-book > button {
+.main-text-intro,
+.add-new-book>button {
     font-weight: bold;
 }
 
 /* Button styling */
-.add-new-book > button {
+.add-new-book>button {
     padding: 10px;
     border-radius: 5px;
 }
 
 /* Button hover effect */
-.add-new-book > button:hover {
+.add-new-book>button:hover,
+.control-buttons>button:hover {
     background-color: brown;
     color: whitesmoke;
 }
 
-/* Library catalog grid layout */
+/* Other styles remain unchanged */
+
+/* Library catalog structure */
 .library-catalog {
-    display: grid;
-    grid-template-columns: repeat(4,1fr);
+    width: 80%;
+    margin: 0 auto;
+    /* Center the catalog */
+}
+
+.library-header {
     background-color: brown;
-    min-width: 80%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* 4 columns for title, author, pages, status */
     justify-items: center;
     padding: 15px;
     font-weight: 800;
-    font-size: 18px; /* Corrected typo */
+    font-size: 18px;
+}
+
+.library-entries {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* 4 columns for title, author, pages, status */
+}
+
+/* Each book-entry should be displayed as a row within the library entries */
+.book-entry {
+    display: contents;
+}
+
+.book-entry>div {
+    text-align: center;
+    /* Center text in each grid cell */
+    padding: 15px;
+    /* Padding for visual spacing */
+    border-bottom: 1px solid #fff;
+    /* Separator for each row */
+    font-size: 18px;
+}
+
+/* Form for adding new book */
+.hidden-form {
+    display: none;
+    min-width: 20%;
+}
+
+.hidden-form>form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.hidden-form>form>input,
+.hidden-form>form>.readStatus {
+    padding: 8px;
+    width: 100%;
+    /* Adjusted from min-width to width to ensure consistent width */
+    border-radius: 8px;
+}
+
+::placeholder,
+.readStatus>label {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+legend {
+    font-size: 40px;
+    font-weight: 800;
+}
+
+.control-buttons>button {
+    width: 80px;
+    padding: 8px;
+    border-radius: 5px;
+    margin-left: 10px;
+    font-weight: bold;
 }
