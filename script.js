@@ -1,14 +1,14 @@
-// DOM element selection
-const addNewBookBtn = document.querySelector("#addBookBtn"); // 'Add a book' button
-const grid = document.querySelector(".library-catalog"); // The grid where books are displayed
-const hiddenForm = document.querySelector(".hidden-form"); // The form used to enter new book details
-const returnCatalogButton = document.querySelector("#returnBtn"); // 'Return' button to go back to the grid view
-const bookForm = document.querySelector("#bookForm"); // The form element itself
+// Select DOM elements
+const addNewBookBtn = document.querySelector("#addBookBtn");
+const grid = document.querySelector(".library-catalog");
+const hiddenForm = document.querySelector(".hidden-form");
+const bookForm = document.querySelector("#bookForm");
+const returnCatalogButton = document.querySelector("#returnBtn");
 
-// Data structure
-const library = []; // Holds the collection of books
+// Initialize library array
+const library = [];
 
-// Book constructor function
+// Book constructor
 function Book(title, author, pages, status) {
   this.title = title;
   this.author = author;
@@ -16,23 +16,26 @@ function Book(title, author, pages, status) {
   this.status = status;
 }
 
-// Adds a new book to the library array and updates the display
-function addBookToLibrary(title, author, pages, status) {
-  const newBook = new Book(title, author, pages, status);
-  library.push(newBook); // Adds the new book to the library array
-  displayBooks(); // Updates the display to include the new book
+// Add or update a book in the library
+function addOrUpdateBook(title, author, pages, status, index) {
+  if (index !== undefined) {
+    library[index] = new Book(title, author, pages, status);
+  } else {
+    library.push(new Book(title, author, pages, status));
+  }
+  displayBooks();
 }
 
-// Updates the display to show all books in the library
+// Display books in the library
 function displayBooks() {
   const entriesContainer = document.querySelector(".library-entries");
-  entriesContainer.innerHTML = ""; // Clears the current display
+  entriesContainer.innerHTML = ""; // Clear existing entries
 
-  // Creates and appends HTML elements for each book in the library
-  library.forEach((book) => {
+  library.forEach((book, index) => {
     const bookDiv = document.createElement("div");
     bookDiv.classList.add("book-entry");
 
+    // Add title, author, pages (not shown for brevity)
     // Creates a div for each property of a book and appends to the book div
     const titleDiv = document.createElement("div");
     titleDiv.textContent = book.title;
@@ -46,44 +49,108 @@ function displayBooks() {
     pagesDiv.textContent = book.pages;
     bookDiv.appendChild(pagesDiv);
 
+    // Status and action buttons container
+    const statusAndButtonsDiv = document.createElement("div");
+    statusAndButtonsDiv.classList.add("status-buttons-container");
+
+    // Status display
     const statusDiv = document.createElement("div");
     statusDiv.textContent = book.status;
-    bookDiv.appendChild(statusDiv);
+    statusAndButtonsDiv.appendChild(statusDiv);
 
-    // Appends the book div to the container for entries
+    // Edit button
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "Edit";
+    editBtn.classList.add("edit-btn");
+    editBtn.addEventListener("click", () => editBook(index));
+    statusAndButtonsDiv.appendChild(editBtn);
+
+    // Delete button
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete";
+    deleteBtn.classList.add("delete-btn");
+    deleteBtn.addEventListener("click", () => deleteBook(index));
+    statusAndButtonsDiv.appendChild(deleteBtn);
+
+    // Append status and buttons container to book div
+    bookDiv.appendChild(statusAndButtonsDiv);
+
+    // Append book entry to the grid container
     entriesContainer.appendChild(bookDiv);
   });
 }
 
+// Edit book function
+function editBook(index) {
+  const book = library[index];
+  // Populate form fields with book info for editing
+  document.getElementById("title").value = book.title;
+  document.getElementById("author").value = book.author;
+  document.getElementById("pages").value = book.pages;
+  document.querySelector(
+    `input[name="readBook"][value="${book.status}"]`
+  ).checked = true;
+
+  // Show the form and hide the grid
+  hiddenForm.style.display = "flex";
+  grid.style.display = "none";
+  addNewBookBtn.style.display = "none";
+
+  // Set a data attribute on the form to indicate we're editing
+  bookForm.dataset.index = index;
+}
+
+// Delete book function
+function deleteBook(index) {
+  if (confirm("Are you sure you want to delete this book?")) {
+    library.splice(index, 1); // Remove the book from the array
+    displayBooks(); // Update the display
+  }
+}
+
 // Event listeners
 addNewBookBtn.addEventListener("click", () => {
-  // Toggles the display between the grid and the form
-  grid.style.display = "none";
+  // Reset form and remove the editing index
+  bookForm.reset();
+  delete bookForm.dataset.index;
+
+  // Show the form for adding a new book
   hiddenForm.style.display = "flex";
+  grid.style.display = "none";
   addNewBookBtn.style.display = "none";
 });
 
 returnCatalogButton.addEventListener("click", () => {
-  // Toggles the display back to the grid from the form
-  grid.style.display = "grid";
+  // Return to the grid display
   hiddenForm.style.display = "none";
+  grid.style.display = "grid";
   addNewBookBtn.style.display = "block";
 });
 
 bookForm.addEventListener("submit", (event) => {
-  event.preventDefault(); // Prevents the default form submission action
+  event.preventDefault();
 
-  // Retrieves values from the form and adds the new book to the library
+  // Get form values
   const title = document.getElementById("title").value;
   const author = document.getElementById("author").value;
   const pages = document.getElementById("pages").value;
   const status = document.querySelector('input[name="readBook"]:checked').value;
 
-  addBookToLibrary(title, author, pages, status); // Invokes function to add the book and update the display
+  // Determine if we're adding or updating based on the presence of an index
+  const index = bookForm.dataset.index
+    ? parseInt(bookForm.dataset.index)
+    : undefined;
+  addOrUpdateBook(title, author, pages, status, index);
 
-  // Resets the form fields and toggles the display back to the grid
+  // Reset the form and update the display
   bookForm.reset();
-  grid.style.display = "grid";
+  delete bookForm.dataset.index;
+
+  // Show the grid and hide the form
   hiddenForm.style.display = "none";
+  grid.style.display = "grid";
   addNewBookBtn.style.display = "block";
 });
+
+// Initial display of books
+displayBooks();

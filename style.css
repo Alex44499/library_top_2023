@@ -47,7 +47,7 @@ body {
 
 /* Button hover effect */
 .add-new-book>button:hover,
-.control-buttons>button:hover {
+.control-buttons>button:hover, .edit-btn:hover, .delete-btn:hover {
     background-color: brown;
     color: whitesmoke;
 }
@@ -132,3 +132,20 @@ legend {
     margin-left: 10px;
     font-weight: bold;
 }
+
+
+
+
+.status-buttons-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    gap: 10px; 
+  }
+  
+
+.edit-btn, .delete-btn{
+    width: 40%;
+    padding: 5px;
+}
+
